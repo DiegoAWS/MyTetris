@@ -1,0 +1,597 @@
+<html>
+
+<style type="text/css">
+    .tetris {
+        border-collapse: collapse;
+    }
+
+
+
+    .celda9 {
+        background-color: #000000;
+    }
+
+    .celda0 {
+        background-color: deeppink;
+    }
+
+    .celda1 {
+        background-color: #0000FF;
+    }
+
+    .celda2 {
+        background-color: #FF0000;
+    }
+
+    .celda3 {
+        background-color: orangered;
+    }
+
+    .celda4 {
+        background-color: #FFFF00;
+    }
+
+    .celda5 {
+        background-color: #00FFFF;
+    }
+
+    .celda6 {
+        background-color: lime;
+    }
+
+    .celda7 {
+        background-color: #888888;
+    }
+</style>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>TETRIS</title>
+
+    <script>
+        var timer;
+        var velocidad = 500;
+
+        var pause = true;
+        var TableroWith = 9;
+        var TableroHeight = 20;
+        var TamañoDeCuadro = 20; // en pixeles
+        var fichasPuestas = new Array(); // Array de [x,y,color]
+        const MATRIZ = [
+            //#region Matriz de Piececitas
+
+            // #region Pieza 0 CUADRADO
+            [
+                [
+                    [0, 0],
+                    [1, 0],
+                    [0, 1],
+                    [1, 1]
+                ],
+
+                [
+                    [0, 0],
+                    [1, 0],
+                    [0, 1],
+                    [1, 1]
+                ],
+
+                [
+                    [0, 0],
+                    [1, 0],
+                    [0, 1],
+                    [1, 1]
+                ],
+
+                [
+                    [0, 0],
+                    [1, 0],
+                    [0, 1],
+                    [1, 1]
+                ]
+
+            ],
+            //#endregion
+            //#region Pieza 1  flecha
+            [
+                [
+                    [0, 1],
+                    [1, 0],
+                    [1, 1],
+                    [2, 1]
+                ],
+
+                [
+                    [1, 2],
+                    [1, 0],
+                    [1, 1],
+                    [2, 1]
+                ],
+
+                [
+                    [0, 1],
+                    [1, 2],
+                    [1, 1],
+                    [2, 1]
+                ],
+
+                [
+                    [0, 1],
+                    [1, 0],
+                    [1, 1],
+                    [1, 2]
+                ]
+            ],
+            //#endregion
+            //#region Pieza 2 Palo
+
+            [
+                [
+                    [1, 0],
+                    [1, 1],
+                    [1, 2],
+                    [1, 3]
+                ],
+
+                [
+                    [0, 1],
+                    [1, 1],
+                    [2, 1],
+                    [3, 1]
+                ],
+
+                [
+                    [1, 0],
+                    [1, 1],
+                    [1, 2],
+                    [1, 3]
+                ],
+
+                [
+                    [0, 1],
+                    [1, 1],
+                    [2, 1],
+                    [3, 1]
+                ]
+            ],
+            //#endregion
+            //#region Pieza 3 L inv
+
+            [
+                [
+                    [0, 0],
+                    [0, 1],
+                    [1, 1],
+                    [2, 1]
+                ],
+
+                [
+                    [1, 0],
+                    [2, 0],
+                    [1, 1],
+                    [1, 2]
+                ],
+
+                [
+                    [0, 1],
+                    [1, 1],
+                    [2, 1],
+                    [2, 2]
+                ],
+
+                [
+                    [1, 0],
+                    [1, 1],
+                    [1, 2],
+                    [0, 2]
+                ]
+            ],
+            //#endregion 
+            //#region Pieza 4 L 
+
+            [
+                [
+                    [2, 0],
+                    [0, 1],
+                    [1, 1],
+                    [2, 1]
+                ],
+
+                [
+                    [1, 0],
+                    [2, 2],
+                    [1, 1],
+                    [1, 2]
+                ],
+
+                [
+                    [0, 1],
+                    [1, 1],
+                    [2, 1],
+                    [0, 2]
+                ],
+
+                [
+                    [1, 0],
+                    [1, 1],
+                    [1, 2],
+                    [0, 0]
+                ]
+            ],
+
+            //#endregion
+            //#region Pieza 5 S inv 
+            [
+                [
+                    [0, 0],
+                    [1, 0],
+                    [2, 1],
+                    [1, 1]
+                ],
+
+                [
+                    [0, 2],
+                    [1, 0],
+                    [0, 1],
+                    [1, 1]
+                ],
+
+                [
+                    [0, 0],
+                    [1, 0],
+                    [2, 1],
+                    [1, 1]
+                ],
+
+                [
+                    [0, 2],
+                    [1, 0],
+                    [0, 1],
+                    [1, 1]
+                ]
+
+            ],
+            //#endregion
+
+            //#region Pieza 6 S
+            [
+                [
+                    [2, 0],
+                    [1, 0],
+                    [0, 1],
+                    [1, 1]
+                ],
+
+                [
+                    [0, 0],
+                    [0, 1],
+                    [1, 1],
+                    [1, 2]
+                ],
+
+                [
+                    [2, 0],
+                    [1, 0],
+                    [0, 1],
+                    [1, 1]
+                ],
+
+                [
+                    [0, 0],
+                    [0, 1],
+                    [1, 1],
+                    [1, 2]
+                ]
+            ]
+            //#endregion
+        ];
+        //#endregion
+        var myPieza = new PIEZA();
+
+        //#region CLASE Pieza
+
+        function PIEZA() {
+            this.X = 3;
+            this.Y = 0;
+            this.Rotacion = 0;
+            this.T = Math.floor(Math.random() * MATRIZ.length); // Tipo tambien define el color ()
+            this.Piececitas = MATRIZ[this.T][this.Rotacion];
+            this.Rota = Rota;
+            this.Down = bajarPieza;
+            this.ColisionLateral = ColisionLateral;
+            this.ColisionDown = ColisionDown;
+            this.ColisionEntrePiezas = ColisionEntrePiezas;
+
+        }
+
+        function bajarPieza() {
+
+            this.Y++;
+
+            if (this.ColisionDown()) { // LLega al final o a una pieza
+
+                this.Y--;
+
+                for (let element of this.Piececitas)
+                    fichasPuestas.push([element[0] + this.X, element[1] + this.Y, this.T]);
+
+                this.X = 3;
+                this.Y = 0;
+                this.T = Math.floor(Math.random() * MATRIZ.length); // Tipo tambien define el color ()
+                this.Piececitas = MATRIZ[this.T][this.Rotacion];
+
+
+
+            }
+
+
+        }
+
+        function Rota() {
+            this.Rotacion == 3 ? this.Rotacion = 0 : this.Rotacion++;
+            this.Piececitas = MATRIZ[this.T][this.Rotacion];
+
+            if (this.ColisionDown() || this.ColisionLateral()) {
+                this.Rotacion == 0 ? this.Rotacion = 3 : this.Rotacion--;
+                this.Piececitas = MATRIZ[this.T][this.Rotacion];
+            }
+            pintar();
+        }
+
+        //#region Colisiones
+
+        function ColisionLateral() {
+
+            for (let element of this.Piececitas)
+                if (element[0] + this.X < 0 || element[0] + this.X >= TableroWith) return true;
+
+            return false;
+        }
+
+        function ColisionDown() {
+
+            for (let element of this.Piececitas)
+                if (element[1] + this.Y >= TableroHeight || this.ColisionEntrePiezas(element)) return true;
+
+            return false;
+        }
+
+        function ColisionEntrePiezas(piezaVerificar) {
+
+            for (let element of fichasPuestas)
+                if (piezaVerificar[0] + this.X == element[0] && piezaVerificar[1] + this.Y == element[1]) return true;
+
+
+            return false;
+        }
+        //#endregion
+
+        //#endregion
+
+
+        //#region Main Methodes
+
+        function ResponsiveDesign() {
+
+            let Height = window.innerHeight;
+            let Width = window.innerWidth;
+
+            if (Width * TableroHeight > Height * TableroWith) // Tablets y PC 
+            {
+
+                TamañoDeCuadro = Math.round((Height) / (TableroHeight + 1));
+            } else {
+
+                TamañoDeCuadro = Math.round((Width) / (TableroWith + 1));
+            }
+
+
+        }
+
+        function Welcome() {
+            ResponsiveDesign();
+            pintar();
+
+
+            //  alert("Para jugar utilice las FLECHAS y el ESPACIO pone en Pausa");
+            //  start();
+        }
+
+
+
+        function start() {
+
+            if (gameOver()) {
+
+                alert("GAME OVER");
+                fichasPuestas = [];
+
+                velocidad = 500;
+                start();
+            }
+            pintar();
+            myPieza.Down();
+
+            if (!pause)
+                setTimeout('start()', velocidad);
+
+        }
+
+
+        function gameOver() {
+
+            for (let element of fichasPuestas)
+                if (element[1] == 0) return true;
+
+            return false;
+        }
+
+        function SeEliminaLinea() {
+
+            for (let f = TableroHeight - 1; f >= 0; f--) {
+
+                let conteo = 0;
+
+                for (let c = 0; c < TableroWith; c++) {
+
+                    for (let element of fichasPuestas)
+                        if (element[0] == c && element[1] == f) conteo++;
+
+                }
+
+                if (conteo == TableroWith) {
+                    // Eliminar Fila f
+
+                    let FichasTemp = new Array();
+
+                    for (let element of fichasPuestas) {
+
+                        if (element[1] > f)
+                            FichasTemp.push(element);
+
+                        if (element[1] < f)
+                            FichasTemp.push([element[0], element[1] + 1, element[2]]);
+
+                    }
+
+                    fichasPuestas = FichasTemp;
+
+
+                    velocidad = Math.round(velocidad * 0.9);
+                    if (f < TableroHeight)
+                        f++;
+                }
+            }
+        }
+        //#endregion
+
+        //#region Pintar
+        function pintar() {
+
+            var html = "<table class='tetris'>"
+            var color = 9; // Negro Fondo
+
+            for (var f = 0; f < TableroHeight; f++) {
+                html += "<tr>";
+
+                for (var c = 0; c < TableroWith; c++) {
+
+                    // Dibuja la pieza
+                    for (let element of myPieza.Piececitas)
+                        if (element[0] + myPieza.X == c && element[1] + myPieza.Y == f) color = myPieza.T;
+
+
+                    // Dibuja las piezas Puestas
+                    for (let element of fichasPuestas)
+                        if (element[0] == c && element[1] == f) color = element[2];
+
+
+
+                    html += "<td  style='width: " + TamañoDeCuadro + "px; height: " + TamañoDeCuadro +
+                        "px;  padding: 0px' class='celda" + color + "'></td>";
+                    color = 9;
+                }
+                html += "</tr>";
+            }
+
+            html += "</table>";
+
+            document.getElementById('tetris').innerHTML = html;
+
+
+            SeEliminaLinea();
+
+        }
+        //#endregion
+
+        //#region Control de Teclas
+
+        function Pause() {
+            if (pause) {
+
+                pause = false;
+                start();
+
+            } else {
+
+                pintar();
+                pause = true;
+            }
+
+        }
+
+        function Left() {
+            if (pause) return;
+            myPieza.X--;
+            if (myPieza.ColisionLateral() || myPieza.ColisionDown())
+                myPieza.X++;
+            pintar();
+        }
+
+        function Right() {
+            if (pause) return;
+            myPieza.X++;
+            if (myPieza.ColisionLateral() || myPieza.ColisionDown())
+                myPieza.X--;
+            pintar();
+        }
+
+        function Up() {
+            if (pause) return;
+            myPieza.Rota();
+            pintar();
+        }
+
+        function Down() {
+            if (pause) return;
+            myPieza.Down();
+            pintar();
+        }
+
+        function tecla(e) {
+            var characterCode = (e && e.which) ? e.which : e.keyCode;
+            e.preventDefault();
+            switch (characterCode) {
+
+
+                // Pause con el espacio
+                case 32:
+                    Pause();
+                    break;
+
+                    // Left Arrow
+                case 37:
+                    Left();
+                    break;
+                    // Right Arrow
+                case 39:
+                    Right();
+                    break;
+
+                    // Down Arrow
+                case 40:
+
+                    Down();
+                    break;
+
+                    // Up Arrow
+                case 38:
+                    Up();
+                    break;
+            }
+
+
+        }
+        //#endregion
+    </script>
+
+</head>
+
+<body onload='Welcome()' onkeydown="tecla(event)">
+    <div id='tetris'>
+
+
+    </div>
+</body>
+
+</html>

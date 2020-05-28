@@ -1,48 +1,5 @@
 <html>
 
-<style type="text/css">
-    .tetris {
-        border-collapse: collapse;
-    }
-
-
-
-    .celda9 {
-        background-color: #000000;
-    }
-
-    .celda0 {
-        background-color: deeppink;
-    }
-
-    .celda1 {
-        background-color: #0000FF;
-    }
-
-    .celda2 {
-        background-color: #FF0000;
-    }
-
-    .celda3 {
-        background-color: orangered;
-    }
-
-    .celda4 {
-        background-color: #FFFF00;
-    }
-
-    .celda5 {
-        background-color: #00FFFF;
-    }
-
-    .celda6 {
-        background-color: lime;
-    }
-
-    .celda7 {
-        background-color: #888888;
-    }
-</style>
 
 <head>
     <meta charset="UTF-8" />
@@ -57,6 +14,9 @@
         var TableroHeight = 20;
         var TamañoDeCuadro = 20; // en pixeles
         var fichasPuestas = new Array(); // Array de [x,y,color]
+        const COLORES=["red","pink","blue","aqua","coral","green","gold","lime","skyblue","black","black"];
+        
+        
         const MATRIZ = [
             //#region Matriz de Piececitas
 
@@ -468,7 +428,7 @@
         //#region Pintar
         function pintar() {
 
-            var html = "<table class='tetris'>"
+            var html = "<table style='border-collapse: collapse;'>"
             var color = 9; // Negro Fondo
 
             for (var f = 0; f < TableroHeight; f++) {
@@ -488,7 +448,7 @@
 
 
                     html += "<td  style='width: " + TamañoDeCuadro + "px; height: " + TamañoDeCuadro +
-                        "px;  padding: 0px' class='celda" + color + "'></td>";
+                        "px;  padding: 0px; background-color: " + COLORES[color] + ";'></td>";
                     color = 9;
                 }
                 html += "</tr>";
@@ -588,7 +548,7 @@
 </head>
 
 <body onload='Welcome()' onkeydown="tecla(event)">
-    <div id='tetris'>
+    <div id='tetris' >
 
 
     </div>
